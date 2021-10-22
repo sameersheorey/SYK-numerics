@@ -36,11 +36,11 @@ for temp in temp_range:
 
     a = (1/2) * np.log(2)
     b = (1/2) * sum(np.log(1 + Sf[1::2]/(1j * w[1::2])))
-    c = -t0/2 * integrate.simps(G[(len(G)//2):].real * S[(len(G)//2):].real - (J_squared/4)*G[(len(G)//2):].real**4,
+    c = -t0/2 * integrate.simps(G[(len(G)//2):].real * S[(len(G)//2):].real - (J_squared/q)*G[(len(G)//2):].real**q,
                                 t[(len(t)//2):])
 
     result1 = (a + b - c).real
-    result2 = np.sqrt(J_squared) * (-t0)/4 * integrate.simps(G[(len(G)//2):].real**4, t[(len(t)//2):])
+    result2 = np.sqrt(J_squared) * (-t0)/q * integrate.simps(G[(len(G)//2):].real**q, t[(len(t)//2):])
 
     entropy = result1 - result2
     SbyN.append(entropy)
