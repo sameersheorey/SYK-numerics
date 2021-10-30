@@ -128,13 +128,13 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
         Gf = Gf_new
 
         phase = dt * np.exp(-complex(0, 1) * w * t0)
-        G = ifft(Gf / phase, G.size)
-        G = 2*G
-        S = J_squared * (G ** (q-1))
+        G_half = ifft(Gf / phase, t.size)
+
+        S = (J_squared * (2 ** (q-1))) * (G_half ** (q-1))
         Sf = fft(S)
         Sf = 0.5 * Sf * phase
         # error.append(sum(abs(Gf[1::2] - 1 / (-1j * w[1::2] - Sf[1::2]))))
         # print(error[-1])
         # print(k)
 
-    return t, G, w, S, Sf
+    return t, 2 * G_half, w, S, Sf
