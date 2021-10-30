@@ -123,16 +123,16 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
         if k > 1:
             # print(diff[-2], diff[-1])
             if diff[-1] > diff[-2]:
-                a = 0.5*a
+                a = 0.5 * a
                 # print("reduce a")
         Gf = Gf_new
 
-        G = ifft(Gf/(dt*np.exp(-complex(0, 1)*w*t0)), G.size)
+        phase = dt * np.exp(-complex(0, 1) * w * t0)
+        G = ifft(Gf / phase, G.size)
         G = 2*G
         S = J_squared * (G ** (q-1))
         Sf = fft(S)
-        Sf = Sf * dt * np.exp(-complex(0, 1) * w * t0)
-        Sf = (1/2) * Sf
+        Sf = 0.5 * Sf * phase
         # error.append(sum(abs(Gf[1::2] - 1 / (-1j * w[1::2] - Sf[1::2]))))
         # print(error[-1])
         # print(k)
