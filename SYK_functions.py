@@ -103,13 +103,14 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
     w = -w  # convention of sign in exponential of definition of Fourier transform
     #In order to get a discretisation of the continuous Fourier transform
     #we need to multiply g by a phase factor
-    Gf = Gf * dt*np.exp(-complex(0, 1)*w*t0)
-    Gf = (1/2) * Gf
+
+    phase = 0.5 * dt * np.exp((-complex(0, 1) * t0) * w)
+
+    Gf = Gf * phase
 
     # Compute Fourier transform by scipy's FFT function
     Sf = fft(S)
-    Sf = Sf * dt*np.exp(-complex(0, 1)*w*t0)
-    Sf = (1/2) * Sf
+    Sf = Sf * phase
 
     a = 0.5
 
@@ -127,14 +128,13 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
                 # print("reduce a")
         Gf = Gf_new
 
-        phase = dt * np.exp(-complex(0, 1) * w * t0)
-        G_half = ifft(Gf / phase, t.size)
+        G = ifft(Gf / phase, t.size)
 
-        S = (J_squared * (2 ** (q-1))) * (G_half ** (q-1))
+        S = J_squared * (G ** (q-1))
         Sf = fft(S)
-        Sf = 0.5 * Sf * phase
+        Sf = Sf * phase
         # error.append(sum(abs(Gf[1::2] - 1 / (-1j * w[1::2] - Sf[1::2]))))
         # print(error[-1])
         # print(k)
 
-    return t, 2 * G_half, w, S, Sf
+    return t, G, w, S, Sf
