@@ -97,6 +97,7 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
 
     # Compute Fourier transform by scipy's FFT function
     Gf = fft(G)
+    Gf[::2] = 0
     # frequency normalization factor is 2*np.pi/dt
     w = fftfreq(G.size)*2*np.pi/dt
 
@@ -115,21 +116,19 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
     a = 0.5
 
     for k in range(1, iteration_length):
-        Gf_new = np.zeros(t.size, np.complex128)
-        Gf_guess = np.reciprocal(-1j * w[1::2] - Sf[1::2])
-        Gf_adjustment = a * (Gf_guess - Gf[1::2])
-        Gf_new[1::2] = Gf[1::2] + Gf_adjustment
+        Gf_adjustment = np.reciprocal(-1j * w[1::2] - Sf[1::2])
+        Gf_adjustment -= Gf[1::2]
+        Gf_adjustment *= a
+        Gf[1::2] += Gf_adjustment
         diff_new = np.sum(np.abs(Gf_adjustment))
         if k > 1:
             if diff_new > diff:
                 a = 0.5 * a
         diff = diff_new
-        Gf = Gf_new
 
         G = ifft(Gf / phase, t.size)
 
         S = J_squared * (G ** (q-1))
-        Sf = fft(S)
-        Sf = Sf * phase
+        Sf = fft(S) * phase
 
     return t, G, w, S, Sf
