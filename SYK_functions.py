@@ -120,8 +120,9 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
     for k in range(1, iteration_length):
         Gf_new = np.zeros(t.size, np.complex128)
         Gf_guess = np.reciprocal(-1j * w[1::2] - Sf[1::2])
-        Gf_new[1::2] = Gf[1::2] + (a * (Gf_guess - Gf[1::2]))
-        diff.append(np.sum(np.abs(Gf_new - Gf)))
+        Gf_adjustment = a * (Gf_guess - Gf[1::2])
+        Gf_new[1::2] = Gf[1::2] + Gf_adjustment
+        diff.append(np.sum(np.abs(Gf_adjustment)))
         if k > 1:
             # print(diff[-2], diff[-1])
             if diff[-1] > diff[-2]:
