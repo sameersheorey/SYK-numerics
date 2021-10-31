@@ -114,20 +114,16 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
 
     a = 0.5
 
-    diff = []
-    # error = []
-
     for k in range(1, iteration_length):
         Gf_new = np.zeros(t.size, np.complex128)
         Gf_guess = np.reciprocal(-1j * w[1::2] - Sf[1::2])
         Gf_adjustment = a * (Gf_guess - Gf[1::2])
         Gf_new[1::2] = Gf[1::2] + Gf_adjustment
-        diff.append(np.sum(np.abs(Gf_adjustment)))
+        diff_new = np.sum(np.abs(Gf_adjustment))
         if k > 1:
-            # print(diff[-2], diff[-1])
-            if diff[-1] > diff[-2]:
+            if diff_new > diff:
                 a = 0.5 * a
-                # print("reduce a")
+        diff = diff_new
         Gf = Gf_new
 
         G = ifft(Gf / phase, t.size)
@@ -135,8 +131,5 @@ def G_SD(t0, dt, G_input, q, iteration_length, J_squared=1):
         S = J_squared * (G ** (q-1))
         Sf = fft(S)
         Sf = Sf * phase
-        # error.append(sum(abs(Gf[1::2] - 1 / (-1j * w[1::2] - Sf[1::2]))))
-        # print(error[-1])
-        # print(k)
 
     return t, G, w, S, Sf
