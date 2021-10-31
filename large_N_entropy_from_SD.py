@@ -14,7 +14,7 @@ dt = 0.0001  # Time step - must divide t0 exactly.
 J_squared = 1  # Variance of couplings is given by 'J_squared * 3!/N^3'
 q = 4  # Even integer ≥4. Number of fermions involved in random interactions in SYK model
 iteration_length = 20
-temp_range = 10 ** np.arange(-2, 0.1, 0.1)  # Set range of temperatures to calculate S/N for
+temp_range = 10 ** np.arange(-2, -1, 0.1)  # Set range of temperatures to calculate S/N for
 
 # Define initial guess for two point function: usually taken to be free theory two point function
 
@@ -30,7 +30,7 @@ for temp in temp_range:
     runtime_start = time.time()
 
     t0 = -1 / temp
-    t0 = round(t0, 2)  # rounding since we want dt to divide t0
+    t0 = round(t0, 0)  # rounding since we want dt to divide t0
 
     t, G, w, S, Sf = G_SD(t0, dt, G_input, q, iteration_length)
 
